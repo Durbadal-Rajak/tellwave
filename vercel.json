@@ -1,0 +1,62 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.mjs": {
+      "maxDuration": 300,
+      "memory": 2048,
+      "includeFiles": "node_modules/**/onnxruntime-node/bin/napi-v*/linux/x64/{onnxruntime_binding.node,libonnxruntime.so*}"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/mcp",
+      "destination": "/api/index?__p=/mcp"
+    },
+    {
+      "source": "/mcp/:key",
+      "destination": "/api/index?__p=/mcp/:key"
+    },
+    {
+      "source": "/r/:path*",
+      "destination": "/api/index?__p=/r/:path*"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index?__p=/api/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Embedder-Policy",
+          "value": "credentialless"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

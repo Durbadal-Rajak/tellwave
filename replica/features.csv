@@ -1,0 +1,37 @@
+feature,area,priority,original,clone,notes
+Voice grid with built-in voices,voices,must,yes,yes,Kokoro voices replace VibeVoice presets
+Select a voice (highlighted card),voices,must,yes,yes,
+Search voices,voices,should,yes,yes,plus gender/accent filters
+Play a short voice preview,voices,should,no,yes,new
+Upload a voice sample to clone,voices,must,yes,skip,Kokoro cannot clone; needs a GPU model like VibeVoice
+Record a voice sample to clone,voices,should,yes,skip,same reason as upload
+Delete a voice,voices,could,yes,skip,built-in voices only
+Type or paste text,text,must,yes,yes,draft kept between visits
+Character and word count,text,should,yes,yes,plus estimated duration; plus estimated length
+Load text from a .txt file,text,should,yes,yes,
+Two to four speakers from Speaker N: lines,text,should,yes,yes,one Kokoro voice per speaker; voice per speaker
+Voice strength (CFG),settings,should,yes,skip,VibeVoice-only setting; replaced by speed
+Speaking speed,settings,should,no,yes,new
+Generate speech,generation,must,yes,partial,runs in the visitor's browser so the website has no limit; built and tested with a stand-in engine; the real Kokoro model can only be checked on the live site
+Loading state while generating,generation,must,yes,yes,"progress per sentence; model download % then part n of m, live waveform"
+Play generated audio,output,must,yes,yes,waveform with seek
+Download WAV,output,must,yes,yes,
+Save to library,output,should,yes,yes,browser storage (IndexedDB)
+Library list with search,library,should,yes,yes,
+Play / download / delete from library,library,should,yes,yes,
+Delete confirmation,library,should,yes,yes,
+Toast notifications,ui,should,yes,yes,
+Dark and light theme,ui,should,yes,yes,follows the system until changed
+Phone layout,ui,must,yes,yes,"390px checked, no sideways scroll"
+Compose royalty-free music by mood,music,must,no,yes,new; original synth music; 8 moods
+Music length / tempo / intensity / variation,music,should,no,yes,new; tempo is per mood; set via MCP bpm
+Search free-license music tracks,music,should,no,yes,new; Openverse CC0 and CC BY; tested against a mock of the API
+Credit line for CC BY tracks,music,should,no,yes,new
+MCP endpoint behind a secret link,claude,must,no,yes,new; or Authorization: Bearer
+MCP tool: list voices,claude,must,no,yes,new
+MCP tool: generate voiceover,claude,must,no,partial,new; server-side Kokoro; server Kokoro checked only with a stand-in; verify with /api/selftest after deploy
+MCP tool: compose music,claude,must,no,yes,new
+MCP tool: search music,claude,should,no,yes,new
+Connect-to-Claude page,claude,should,no,yes,new; key maker + connection check
+REST API for voices and audio,api,could,yes,yes,"/api/status, /api/voices, /api/moods"
+Model status check,generation,could,yes,yes,/api/selftest

@@ -1,0 +1,6 @@
+replica
+test
+dev
+tools
+*.md
+!README.md

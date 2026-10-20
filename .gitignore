@@ -1,0 +1,9 @@
+node_modules
+.vercel
+.env
+.env.*
+*.log
+.DS_Store
+# reference screenshots of the original app stay local (Replica rule: never shipped)
+replica/screens/
+replica/diffs/*.png

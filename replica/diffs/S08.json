@@ -1,0 +1,48 @@
+{
+  "mode": "layout",
+  "original": {
+    "width": 900,
+    "height": 536
+  },
+  "clone": {
+    "width": 1440,
+    "height": 2805
+  },
+  "compared_at": {
+    "width": 480,
+    "height": 286
+  },
+  "height_delta_pct": 226.9,
+  "score": 28.3,
+  "verdict": "different",
+  "regions": [
+    {
+      "x": 75,
+      "y": 0,
+      "w": 750,
+      "h": 536,
+      "cells": 43,
+      "where": "middle centre"
+    },
+    {
+      "x": 0,
+      "y": 450,
+      "w": 225,
+      "h": 86,
+      "cells": 5,
+      "where": "bottom left"
+    },
+    {
+      "x": 750,
+      "y": 0,
+      "w": 75,
+      "h": 75,
+      "cells": 1,
+      "where": "top right"
+    }
+  ],
+  "files": {
+    "original": "replica/screens/demo_19.png",
+    "clone": "replica/clone-screens/S08-output-desktop.png"
+  }
+}

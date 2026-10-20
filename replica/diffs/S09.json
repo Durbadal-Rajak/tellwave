@@ -1,0 +1,40 @@
+{
+  "mode": "layout",
+  "original": {
+    "width": 900,
+    "height": 536
+  },
+  "clone": {
+    "width": 1440,
+    "height": 900
+  },
+  "compared_at": {
+    "width": 480,
+    "height": 286
+  },
+  "height_delta_pct": 4.9,
+  "score": 22.6,
+  "verdict": "different",
+  "regions": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 900,
+      "h": 536,
+      "cells": 57,
+      "where": "middle centre"
+    },
+    {
+      "x": 225,
+      "y": 300,
+      "w": 75,
+      "h": 75,
+      "cells": 1,
+      "where": "middle left"
+    }
+  ],
+  "files": {
+    "original": "replica/screens/demo_17.png",
+    "clone": "replica/clone-screens/S09-library-desktop.png"
+  }
+}

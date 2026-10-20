@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tellwave: voiceovers and music for videos</title>
+  <meta name="description" content="Free voiceovers and royalty-free music for your videos, made in your browser. No sign-up, no limits.">
+  <meta name="theme-color" content="#121c22">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,750&display=swap">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script>
+    try { var t = localStorage.getItem("tellwave-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the studio</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="Tellwave home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16h3l2.5-6 4 13 4-18 4 18 3-9 2 2h3.5"/></svg>
+        <span class="brand-name">Tellwave</span>
+      </a>
+      <nav class="modes" role="tablist" aria-label="Studio sections">
+        <button class="mode" role="tab" id="tab-voice" aria-controls="panel-voice" aria-selected="true" data-tab="voice" data-icon="mic">Voiceover</button>
+        <button class="mode mode-music" role="tab" id="tab-music" aria-controls="panel-music" aria-selected="false" tabindex="-1" data-tab="music" data-icon="note">Music</button>
+        <button class="mode" role="tab" id="tab-claude" aria-controls="panel-claude" aria-selected="false" tabindex="-1" data-tab="claude" data-icon="plug">Claude</button>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-btn" id="open-library" type="button" aria-label="Library" data-icon="library">
+          <span class="count-badge" id="library-count" hidden>0</span>
+        </button>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme" data-icon="moon"></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- Voiceover -->
+    <section class="panel" id="panel-voice" role="tabpanel" aria-labelledby="tab-voice">
+      <div class="voice-layout">
+        <div class="card script-card">
+            <div class="card-head">
+              <h2 class="card-title"><label for="script">Script</label></h2>
+              <label class="btn btn-ghost btn-sm file-btn">
+                <span data-icon="file"></span>Open a .txt file
+                <input type="file" id="script-file" accept=".txt,text/plain" class="visually-hidden">
+              </label>
+            </div>
+            <textarea id="script" class="script-input" rows="9" spellcheck="true" placeholder="Type or paste what you want to hear.
+
+For a conversation, start lines with Speaker 1: and Speaker 2:"></textarea>
+            <div class="script-meta" id="script-meta" aria-live="polite">
+              <span id="char-count">0 characters</span>
+              <span id="word-count">0 words</span>
+              <span id="est-length">about 0:00</span>
+            </div>
+            <p class="field-error" id="script-error" hidden></p>
+          </div>
+
+        <aside class="card voices-card" aria-labelledby="voices-title">
+          <div class="card-head">
+            <h2 class="card-title" id="voices-title">Voice</h2>
+            <span class="muted small" id="voice-picked"></span>
+          </div>
+          <div class="search-field">
+            <span data-icon="search" aria-hidden="true"></span>
+            <label class="visually-hidden" for="voice-search">Search voices</label>
+            <input type="search" id="voice-search" placeholder="Search voices" autocomplete="off">
+          </div>
+          <div class="chips" role="radiogroup" aria-label="Filter voices" id="voice-filter">
+            <button role="radio" aria-checked="true" data-filter="all">All</button>
+            <button role="radio" aria-checked="false" data-filter="female">Female</button>
+            <button role="radio" aria-checked="false" data-filter="male">Male</button>
+            <button role="radio" aria-checked="false" data-filter="british">British</button>
+          </div>
+          <div class="voice-list" id="voice-list" role="radiogroup" aria-labelledby="voices-title"></div>
+          <p class="empty" id="voice-empty" hidden>No voice matches that. Try a name like Heart or George.</p>
+        </aside>
+
+        <div class="card" id="speakers-card" hidden>
+            <h2 class="card-title">Voices for each speaker</h2>
+            <p class="muted small">Speaker 1 uses the voice you picked. Choose the others here.</p>
+            <div class="speaker-grid" id="speaker-grid"></div>
+          </div>
+
+        <div class="card settings-card">
+            <div class="slider-field">
+              <label for="speed">Speed</label>
+              <input type="range" id="speed" min="0.5" max="2" step="0.05" value="1" aria-describedby="speed-out">
+              <output id="speed-out" for="speed">1.0×</output>
+            </div>
+            <div class="toggle-field" id="gpu-field" hidden>
+              <input type="checkbox" id="use-gpu" class="switch">
+              <label for="use-gpu">Use the graphics chip <span class="muted">(faster, one-time 330 MB download)</span></label>
+            </div>
+          </div>
+
+        <div class="generate-row">
+          <button class="btn btn-primary btn-lg" id="make-voice" type="button"><span data-icon="wave"></span><span class="btn-label">Make voiceover</span></button>
+          <p class="notice" id="model-notice">The first voiceover downloads the voice model to this device (about 90 MB). After that, voiceovers start right away.</p>
+        </div>
+
+        <div class="card output-card" id="voice-output" hidden aria-live="polite">
+            <div class="card-head">
+              <h2 class="card-title" id="voice-output-title">Your voiceover</h2>
+              <span class="status-text" id="voice-status"></span>
+            </div>
+            <div class="wave-wrap"><canvas class="wave" id="voice-wave" aria-hidden="true"></canvas></div>
+            <div class="progress" id="voice-progress" role="progressbar" aria-label="Voiceover progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></div>
+            <audio id="voice-audio" controls preload="metadata" hidden></audio>
+            <div class="output-meta" id="voice-meta"></div>
+            <div class="actions" id="voice-actions" hidden>
+              <a class="btn btn-primary" id="voice-download" download><span data-icon="download"></span>Download WAV</a>
+              <button class="btn btn-secondary" id="voice-save" type="button"><span data-icon="bookmark"></span>Save to library</button>
+            </div>
+          </div>
+      </div>
+    </section>
+
+    <!-- Music -->
+    <section class="panel" id="panel-music" role="tabpanel" aria-labelledby="tab-music" hidden>
+      <div class="music-layout">
+        <div class="stack">
+          <div class="card">
+            <h2 class="card-title">Compose a track</h2>
+            <p class="muted">Original music made on your device. It's yours to use in any video, with no credit needed.</p>
+            <div class="mood-grid" id="mood-grid" role="radiogroup" aria-label="Mood"></div>
+            <div class="slider-field">
+              <label for="music-length">Length</label>
+              <input type="range" id="music-length" min="5" max="300" step="5" value="60">
+              <output id="music-length-out" for="music-length">1:00</output>
+            </div>
+            <div class="field">
+              <span class="field-label" id="intensity-label">Intensity</span>
+              <div class="chips" role="radiogroup" aria-labelledby="intensity-label" id="intensity">
+                <button role="radio" aria-checked="false" data-value="1">Calm</button>
+                <button role="radio" aria-checked="true" data-value="2">Balanced</button>
+                <button role="radio" aria-checked="false" data-value="3">Intense</button>
+              </div>
+            </div>
+            <div class="field variation-field">
+              <label class="field-label" for="music-seed">Variation</label>
+              <div class="inline">
+                <input type="number" id="music-seed" min="0" max="999999" inputmode="numeric" value="1">
+                <button class="btn btn-secondary btn-sm" id="music-shuffle" type="button"><span data-icon="shuffle"></span>Try another</button>
+              </div>
+            </div>
+            <button class="btn btn-music btn-lg" id="make-music" type="button"><span data-icon="note"></span><span class="btn-label">Compose track</span></button>
+          </div>
+
+          <div class="card output-card" id="music-output" hidden aria-live="polite">
+            <div class="card-head">
+              <h2 class="card-title" id="music-output-title">Your track</h2>
+              <span class="badge badge-original">Original</span>
+            </div>
+            <div class="wave-wrap"><canvas class="wave wave-music" id="music-wave" aria-hidden="true"></canvas></div>
+            <div class="progress progress-music" id="music-progress" role="progressbar" aria-label="Composing" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></div>
+            <audio id="music-audio" controls preload="metadata" hidden></audio>
+            <div class="output-meta" id="music-meta"></div>
+            <p class="small muted">Free to use anywhere. No credit needed.</p>
+            <div class="actions" id="music-actions" hidden>
+              <a class="btn btn-music" id="music-download" download><span data-icon="download"></span>Download WAV</a>
+              <button class="btn btn-secondary" id="music-save" type="button"><span data-icon="bookmark"></span>Save to library</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card tracks-card">
+          <h2 class="card-title">Find free tracks</h2>
+          <p class="muted">Real recordings from <a href="https://openverse.org" target="_blank" rel="noopener">Openverse</a> that are free to use. Some need a credit line in your video description.</p>
+          <form class="track-search" id="track-form" role="search">
+            <div class="search-field">
+              <span data-icon="search" aria-hidden="true"></span>
+              <label class="visually-hidden" for="track-q">Search free tracks</label>
+              <input type="search" id="track-q" placeholder="Try rain, dark ambient, piano" autocomplete="off" required>
+            </div>
+            <button class="btn btn-secondary" type="submit">Search</button>
+          </form>
+          <div class="filter-row">
+            <div class="chips" role="radiogroup" aria-label="Kind" id="track-kind">
+              <button role="radio" aria-checked="true" data-value="music">Music</button>
+              <button role="radio" aria-checked="false" data-value="sfx">Sound effects</button>
+            </div>
+            <div class="chips" role="radiogroup" aria-label="Licence" id="track-license">
+              <button role="radio" aria-checked="true" data-value="any">Any free licence</button>
+              <button role="radio" aria-checked="false" data-value="cc0">No credit needed</button>
+            </div>
+          </div>
+          <div id="track-results" class="track-results" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Claude -->
+    <section class="panel" id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" hidden>
+      <div class="claude-layout">
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title">Use Tellwave from Claude</h2>
+            <span class="pill" id="mcp-status">Checking…</span>
+          </div>
+          <p class="muted">Connect this site to Claude, then ask for voiceovers and music while you plan or make a video. Claude gets a download link for each file.</p>
+          <ol class="steps">
+            <li>
+              <h3>Create a secret key</h3>
+              <p>It goes at the end of your connector address, so only you can use it.</p>
+              <div class="inline">
+                <button class="btn btn-secondary btn-sm" id="make-key" type="button"><span data-icon="key"></span>Create key</button>
+              </div>
+              <div class="copy-field" id="key-field" hidden>
+                <input type="text" id="key-value" readonly aria-label="Your secret key">
+                <button class="btn btn-ghost btn-sm" type="button" data-copy="key-value"><span data-icon="copy"></span>Copy</button>
+              </div>
+            </li>
+            <li>
+              <h3>Add it to Vercel</h3>
+              <p>In your Vercel project, open Settings, then Environment Variables. Add a variable named <code>MCP_SECRET</code> with your key as the value, then redeploy the project.</p>
+            </li>
+            <li>
+              <h3>Add the connector in Claude</h3>
+              <p>On claude.ai, open Customize, then Connectors. Choose Add, then Add custom connector, name it Tellwave, paste this address and pick No sign in. It then works in the Claude app too.</p>
+              <div class="copy-field">
+                <input type="text" id="mcp-url" readonly aria-label="Connector address">
+                <button class="btn btn-ghost btn-sm" type="button" data-copy="mcp-url"><span data-icon="copy"></span>Copy</button>
+              </div>
+            </li>
+            <li>
+              <h3>Ask for something</h3>
+              <p>In a chat, turn Tellwave on from the + button under Connectors, then ask. For example: “Use Tellwave to make a 45-second suspense track and a voiceover of this intro with a deep male voice.”</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="stack">
+          <div class="card">
+            <h2 class="card-title">Check your key</h2>
+            <p class="muted small">Paste the key you saved in Vercel to test the connection.</p>
+            <form class="inline" id="check-form">
+              <label class="visually-hidden" for="check-key">Secret key</label>
+              <input type="password" id="check-key" placeholder="Your secret key" autocomplete="off" required>
+              <button class="btn btn-secondary btn-sm" type="submit">Check</button>
+            </form>
+            <p class="small" id="check-result" aria-live="polite"></p>
+          </div>
+          <div class="card">
+            <h2 class="card-title">What Claude can do</h2>
+            <ul class="tool-list">
+              <li><strong>Make voiceovers</strong> from a script, with any of the 28 voices, up to four speakers and adjustable speed.</li>
+              <li><strong>Compose music</strong> in eight moods, from 5 seconds to 5 minutes. Original, no credit needed.</li>
+              <li><strong>Find free tracks</strong> and sound effects, with the credit line when one is required.</li>
+              <li><strong>List voices</strong> so it can pick one that suits your video.</li>
+            </ul>
+            <p class="small muted">Claude's requests run on your Vercel server, which includes about 4 hours of processing a month on the free plan. This website itself runs on your device and has no limit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="sheet" id="library-dialog" aria-labelledby="library-title">
+    <div class="sheet-head">
+      <div>
+        <h2 class="card-title" id="library-title">Library</h2>
+        <p class="muted small">Saved on this device only.</p>
+      </div>
+      <button class="icon-btn" type="button" data-close aria-label="Close library" data-icon="x"></button>
+    </div>
+    <div class="search-field">
+      <span data-icon="search" aria-hidden="true"></span>
+      <label class="visually-hidden" for="library-search">Search the library</label>
+      <input type="search" id="library-search" placeholder="Search saved audio" autocomplete="off">
+    </div>
+    <div class="library-list" id="library-list"></div>
+    <p class="empty" id="library-empty" hidden>Nothing saved yet. Make a voiceover or a track, then choose Save to library.</p>
+  </dialog>
+
+  <dialog class="sheet sheet-sm" id="confirm-dialog" aria-labelledby="confirm-title">
+    <h2 class="card-title" id="confirm-title">Delete this?</h2>
+    <p class="muted" id="confirm-text">It will be removed from this device.</p>
+    <div class="actions actions-end">
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+      <button class="btn btn-danger" type="button" id="confirm-yes"><span data-icon="trash"></span>Delete</button>
+    </div>
+  </dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

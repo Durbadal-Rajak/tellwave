@@ -1,0 +1,20 @@
+{
+  "name": "tellwave",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Free voiceovers (Kokoro) and royalty-free music for videos, with an MCP connector for Claude. No login.",
+  "license": "MIT",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "node dev/server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "tokens": "node tools/gen-tokens.mjs"
+  },
+  "dependencies": {
+    "kokoro-js": "1.2.1",
+    "@vercel/blob": ">=0.27.0 <3"
+  }
+}

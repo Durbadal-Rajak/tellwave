@@ -1,0 +1,40 @@
+{
+  "mode": "layout",
+  "original": {
+    "width": 900,
+    "height": 536
+  },
+  "clone": {
+    "width": 1440,
+    "height": 900
+  },
+  "compared_at": {
+    "width": 480,
+    "height": 286
+  },
+  "height_delta_pct": 4.9,
+  "score": 22.0,
+  "verdict": "different",
+  "regions": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 825,
+      "h": 536,
+      "cells": 55,
+      "where": "middle centre"
+    },
+    {
+      "x": 75,
+      "y": 150,
+      "w": 150,
+      "h": 75,
+      "cells": 2,
+      "where": "top left"
+    }
+  ],
+  "files": {
+    "original": "replica/screens/demo_01.png",
+    "clone": "replica/clone-screens/S01-studio-desktop-dark.png"
+  }
+}
